@@ -30,7 +30,7 @@ interface IGlideRecordInternalProperties {
     }>,
     count: number,
     currentIndex: number,
-    columns: []
+    columns: Array<string>
   }
 }
 
@@ -271,6 +271,13 @@ export class GlideRecord implements IGlideRecord {
   }
 
   hasNext(): boolean {
+    if(this.__internalProperties.data.currentIndex >= this.__internalProperties.setLimit) {
+      if(this.__internalProperties.data.count > this.__internalProperties.setLimit) {
+        throw new Error(`Limit set to ${this.__internalProperties.setLimit} but more results were returned. Either increase the limit using setLimit or use a more specific query.`);
+      }
+      return false;
+    }
+
     return this.__internalProperties.data.count > this.__internalProperties.data.currentIndex;
   }
 
@@ -320,7 +327,15 @@ export class GlideRecord implements IGlideRecord {
     }
 
     this.__internalProperties.data.columns.forEach(c => {
-      const {display_value, value, link} = this.__internalProperties.data.data[this.__internalProperties.data.currentIndex][c];
+      const row = this.__internalProperties.data.data[this.__internalProperties.data.currentIndex];
+
+      if(typeof row[c] === "undefined") {
+        // current user doesnt have read access to the column, so remove it from the list
+        this.__internalProperties.data.columns = this.__internalProperties.data.columns.filter(v => v !== c);
+        return;
+      }
+
+      const {display_value, value, link} = row[c];
       this[c] = new GlideElement(c, display_value, value, link);
     });
 
@@ -359,7 +374,7 @@ export class GlideRecord implements IGlideRecord {
     let res = this.__internalProperties.api.query(this.getEncodedQuery(), this.__internalProperties.setLimit, this.__internalProperties.data.columns);
 
     this.__internalProperties.data.data = res[0].result;
-    this.__internalProperties.data.count = res[1];
+    this.__internalProperties.data.count = Math.min(res[1], this.__internalProperties.setLimit);
   }
 
   setAbortAction(abort: boolean) {

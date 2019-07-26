@@ -25,6 +25,7 @@ export enum ConditionTypes {
   EndsWith = 'ENDSWITH',
   Contains = 'CONTAINS',
   DoesNotContain = 'DOESNOTCONTAIN',
+  Dynamicly = 'DYNAMIC',
 }
 Object.freeze(JoinTypes);
 
