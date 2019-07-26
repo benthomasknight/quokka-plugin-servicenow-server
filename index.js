@@ -9,7 +9,7 @@ module.exports = {
   },
 
   beforeEach: config => {
-    global.quokkaSnowConfig = config["quokka-snow-server"];
+    global.snow = config["quokka-plugin-servicenow-server"];
     global.GlideRecord = a.GlideRecord;
   }
 };

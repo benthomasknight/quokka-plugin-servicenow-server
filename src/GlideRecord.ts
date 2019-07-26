@@ -44,7 +44,7 @@ export class GlideRecord implements IGlideRecord {
   [key: string]: GlideElement|Function|IGlideRecordInternalProperties;
 
   constructor(table: string) {
-    const SnowApi = new ServiceNow(global.quokkaSnowConfig.instance, global.quokkaSnowConfig.username, global.quokkaSnowConfig.password, table);
+    const SnowApi = new ServiceNow(global.snow.instance, global.snow.username, global.snow.password, table);
     
     // Place to store all basic configuration variables
     this.__internalProperties = {
@@ -75,7 +75,7 @@ export class GlideRecord implements IGlideRecord {
     this.__internalProperties.table = table;
 
     // Get table classes
-    const classes = new ServiceNow(global.quokkaSnowConfig.instance, global.quokkaSnowConfig.username, global.quokkaSnowConfig.password, "sys_db_object");
+    const classes = new ServiceNow(global.snow.instance, global.snow.username, global.snow.password, "sys_db_object");
     var apiTable = [table];
     while(true) {
       let superClass = classes.query(`name=${apiTable[apiTable.length - 1]}`, 1, ["super_class"]);
@@ -89,7 +89,7 @@ export class GlideRecord implements IGlideRecord {
     }
 
     // Get this glide records columns
-    const tableApi = new ServiceNow(global.quokkaSnowConfig.instance, global.quokkaSnowConfig.username, global.quokkaSnowConfig.password, "sys_dictionary");
+    const tableApi = new ServiceNow(global.snow.instance, global.snow.username, global.snow.password, "sys_dictionary");
     let res = tableApi.query(`nameIN${apiTable.join()}^active=true^elementISNOTEMPTY`, 1000, ["element"]);
     this.__internalProperties.data.columns = res[0].result.map((v: any) => {
       return v.element.value;

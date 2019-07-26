@@ -4,7 +4,7 @@
 
 declare module NodeJS  {
     interface Global {
-        quokkaSnowConfig: {
+        snow: {
           instance: string,
           username: string,
           password: string
