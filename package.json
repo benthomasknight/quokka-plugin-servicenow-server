@@ -14,8 +14,7 @@
     "encodeurl": "^1.0.2",
     "html-to-text": "^5.1.1",
     "request": "^2.88.0",
-    "request-promise-native": "^1.0.7",
-    "servicenow-rest-api": "^1.0.4"
+    "request-promise-native": "^1.0.7"
   },
   "devDependencies": {
     "@types/caseless": "^0.12.2",
