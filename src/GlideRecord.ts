@@ -167,27 +167,27 @@ export class GlideRecord implements IGlideRecord {
   }
 
   canCreate() {
-    
+    return this.__internalProperties.data.canCreate;
   }
 
   canDelete() {
-    throw new Error('Not Implemented.');
+    return this.__internalProperties.data.canDelete;
   }
 
   canRead() {
-    throw new Error('Not Implemented.');
+    return this.__internalProperties.data.canRead;
   }
 
   canWrite() {
-    throw new Error('Not Implemented.');
+    return this.__internalProperties.data.canWrite;
   }
 
   chooseWindow() {
     throw new Error('Not Implemented.');
   }
 
-  dateNumericValue() {
-    throw new Error('Not Implemented.');
+  dateNumericValue(): number|undefined {
+    return undefined;
   }
 
   deleteMultiple() {
@@ -214,8 +214,8 @@ export class GlideRecord implements IGlideRecord {
     return this.__internalProperties.data.count > 0;
   }
 
-  getAttribute(field: string) {
-    throw new Error('Not Implemented.');
+  getAttribute(attr: string): any {
+    return undefined;
   }
 
   getClassDisplayValue() {
@@ -336,7 +336,7 @@ export class GlideRecord implements IGlideRecord {
       }
 
       const {display_value, value, link} = row[c];
-      this[c] = new GlideElement(c, display_value, value, link);
+      this[c] = new GlideElement(this.getTableName(), c, display_value, value, link);
     });
 
     this.__internalProperties.data.currentIndex++;

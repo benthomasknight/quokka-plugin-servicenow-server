@@ -1,6 +1,9 @@
 import { GlideRecord } from "./GlideRecord";
+import { parse } from "date-fns";
+import { ServiceNow } from "./utils/ServiceNow";
 
 interface IGlideElementProperties {
+  table: string,
   display_value: string,
   value: string,
   previous: string,
@@ -15,8 +18,9 @@ interface IGlideElement {
 export class GlideElement implements IGlideElement {
   public __internalProperties: IGlideElementProperties;
 
-  constructor(name: string, display_value:string, value:string, url?: string) {
+  constructor(table: string, name: string, display_value:string, value:string, url?: string) {
     this.__internalProperties = {
+      table: table,
       display_value: display_value,
       value: value,
       previous: value,
@@ -55,8 +59,19 @@ export class GlideElement implements IGlideElement {
     return this.__internalProperties.value == current.toString();
   }
 
+  dateNumericValue(): number|undefined {
+    return parse(this.__internalProperties.value).getTime();
+  }
+
   getAttribute(attr: string): string {
-    throw new Error("Not Implemented");
+    // Note: Not tested yet.
+    let sn = new ServiceNow(global.snow.instance, global.snow.username, global.snow.password, 'sys_schema_attribute_m2m')
+    let res = sn.query(`schema.element=${this.__internalProperties.name}^schema.name=${this.__internalProperties.table}^attribute.name=${attr}`, 1, ['value']);
+
+    if(res[1] > 0) {
+      return res[0].result.value.value;
+    }
+    return '';
   }
 
   getBooleanAttribute(attr: string): boolean {
